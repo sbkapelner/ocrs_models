@@ -109,25 +109,20 @@ class HierText(SizedDataset):
         """
         Generate a JSON Lines version of annotation data in `annotations_file`.
 
-        The training data is a large gzipped JSON file which is slow to parse
-        (despite the ".jsonl.gz" suffix, it is just JSON).
-
-        Convert this to JSONL, with one line per image, which can loaded much
-        more quickly, as individual entries can be parsed only when needed.
+        The training data is a gzipped JSONL file with one JSON object per line.
+        This method copies the file to an uncompressed JSONL format for faster access.
         """
         if os.path.exists(lines_file) and (
             os.path.getmtime(lines_file) >= os.path.getmtime(annotations_file)
         ):
             return
 
-        print("Converting annotations from JSON to JSONL format...")
-        with gzip.open(annotations_file) as in_fp:
-            annotations = json.load(in_fp)["annotations"]
-
+        print("Converting annotations from gzipped JSONL to JSONL format...")
+        with gzip.open(annotations_file, 'rt') as in_fp:
             with open(lines_file, "w") as out_fp:
-                for ann in tqdm(annotations):
-                    ann_json = json.dumps(ann)
-                    out_fp.write(f"{ann_json}\n")
+                for line in tqdm(in_fp):
+                    # Copy each line directly since it's already in JSONL format
+                    out_fp.write(line)
 
 
 DEFAULT_ALPHABET = (
