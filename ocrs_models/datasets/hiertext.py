@@ -118,11 +118,17 @@ class HierText(SizedDataset):
             return
 
         print("Converting annotations from gzipped JSONL to JSONL format...")
-        with gzip.open(annotations_file, 'rt') as in_fp:
-            with open(lines_file, "w") as out_fp:
+        with gzip.open(annotations_file, 'rt', encoding='utf-8') as in_fp:
+            with open(lines_file, "w", encoding='utf-8') as out_fp:
                 for line in tqdm(in_fp):
-                    # Copy each line directly since it's already in JSONL format
-                    out_fp.write(line)
+                    try:
+                        # Validate each line is valid JSON
+                        json.loads(line.strip())
+                        # Write the valid line
+                        out_fp.write(line)
+                    except json.JSONDecodeError:
+                        print(f"Warning: Skipping invalid JSON line")
+                        continue
 
 
 DEFAULT_ALPHABET = (
