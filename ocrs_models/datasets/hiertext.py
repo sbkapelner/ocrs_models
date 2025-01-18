@@ -72,7 +72,7 @@ class HierText(SizedDataset):
         """
         annotations = json.loads(self._annotations[idx])
         img_id = annotations["image_id"]
-        img_path = f"{self._img_dir}/{img_id}.jpg"
+        img_path = f"{self._img_dir}/{img_id}"
 
         word_polys: list[Polygon] = []
         for para in annotations["paragraphs"]:
@@ -210,7 +210,7 @@ class HierTextRecognition(SizedDataset):
 
         cache_path = f"{self._cache_dir}/{image_id}/{min_x}_{min_y}_{max_x}_{max_y}.png"
         if not os.path.exists(cache_path):
-            img_path = f"{self._img_dir}/{image_id}.jpg"
+            img_path = f"{self._img_dir}/{image_id}"
             img = read_image(img_path, ImageReadMode.GRAY)
             _, img_height, img_width = img.shape
 
