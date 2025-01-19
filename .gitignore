@@ -1,5 +1,4 @@
 # Model checkpoints
-*.pt
 
 __pycache__/
 
